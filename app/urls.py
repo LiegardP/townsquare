@@ -15,7 +15,10 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from townsquare_app.views import welcome, login
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
+    url(r'^$', login),
+    url(r'^login$', login),
+    url(r'^welcome$', welcome),
 ]

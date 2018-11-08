@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>townsquare - {% block title %}Bienvenue{% endblock %}</title>
+    <link  rel="stylesheet" type="text/css" href="/static/scss/style.css" />
+</head>
+<header>
+    {% block headerContent %}{% endblock %}    
+</header>
+<body id="{% block bodyId %}genericPage{% endblock %}">
+    <section id="content">
+        {% block content %}{% endblock %}            
+    </section>
+</body>
+</html>

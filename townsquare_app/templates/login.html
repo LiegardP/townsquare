@@ -5,24 +5,11 @@
 {% block bodyId %}loginPage{% endblock %}
 
 {% block content %}
-
-<form action="login" method="post">
-{% csrf_token%}
-    {% if error %}
-        <p class="error">{{ error }}</p>
-    {% endif %}    
+<form action="login" method="get">
+    {{ form.as_p }}
     <p>
-        <label for="email">Email : </label>
-        <input name="email" id="email" size="30" type="email" />
-    </p>
-    <p>
-        <label for="email">Mot de passe : </label>
-        <input name="password" id="password" size="30" type="password" />
-    </p>
-    <p>
-        <input value="Se connecter" type="submit" />
-        <a href=""> Créer un compte</a>
+        <input type="submit" value="se connecter"/>
+        <a href="???">Créer un compte></a> 
     </p>
 </form>
-
-{% endblock %}    
+{% endblock %}

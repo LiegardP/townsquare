@@ -1,27 +1,52 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
-from django.shortcuts import render, redirect
-
+from django.shortcuts import render, render_to_response, redirect
+from django.http import HttpResponseRedirect
 from datetime import datetime
-# Create your views here.
+from townsquare_app.forms import LoginForm
+from townsquare_app.forms import StudentProfileForm, EmployeeProfileForms
+
 
 def welcome(request):
-    return render(request, 'welcome.html', {'current_date_time': datetime.now})
+    return render_to_response('welcome.html', {'current_date_time': datetime.now})
+
 
 def login(request):
-    if len(request.POST) > 0:
-        if 'email' not in request.POST or 'password' not in request.POST:
-            error = "Veuillez entrer une adresse et un mot de passe valide"
-            return render(request, 'login.html', {'error': error})
+    # Test si formulaire a été envoyé
+    if len(request.GET) > 0:
+        form = LoginForm(request.GET)
+        if form.is_valid():
+            return HttpResponseRedirect('/welcome')
         else:
-            email = request.POST['email']
-            password = request.POST['password']
-
-            if password != 'sesame' or email != 'toto@test.com':
-                error = "Adresse de courriel ou mot de passe erroné"
-                return render(request, 'login.html', {'error': error})
-            else:
-                return redirect('/welcome')
+            return render_to_response('login.html', {'form': form})
+    # Le formulaire n'a pas été envoyé
     else:
-        return render(request, 'login.html')
+        form = LoginForm()
+        return render_to_response('login.html', {'form': form})
+
+
+def register(request):
+    if len(request.GET) > 0 and 'profileType' in request.GET:
+        studentForm = StudentProfileForm(prefix="st")
+        employeeForm = EmployeeProfileForms(prefix="em")
+        if request.GET['profileType'] == 'student':
+            studentForm = StudentProfileForm(request.GET, prefix="st")
+            if studentForm.is_valid():
+                studentForm.save()
+                return redirect('/login')
+        elif request.GET['profileType'] == 'employee':
+            employeeForm = EmployeeProfileForms(request.GET, prefix="em")
+            if employeeForm.is_valid():
+                employeeForm.save()
+                return redirect('/login')
+
+        return render(request, 'user_profile.html',
+                      {'studentForm': studentForm,
+                       'employeeForm': employeeForm})
+
+    else:
+        studentForm = StudentProfileForm(prefix="st")
+        employeeForm = EmployeeProfileForms(prefix="em")
+        return render(request, 'user_profile.html',
+                      {'studentForm': studentForm,
+                       'employeeForm': employeeForm})

@@ -3,12 +3,16 @@
 from django.shortcuts import render, render_to_response, redirect
 from django.http import HttpResponseRedirect
 from datetime import datetime
+from townsquare_app.models import Person
 from townsquare_app.forms import LoginForm
 from townsquare_app.forms import StudentProfileForm, EmployeeProfileForms
 
 
 def welcome(request):
-    return render_to_response('welcome.html', {'current_date_time': datetime.now})
+    if 'logged_user_id' in request.session:
+        logged_user_id = request.session['logged_user_id']
+        logged_user = Person.objects.get(id=logged_user_id)
+    return render_to_response('welcome.html', {'logged_user': logged_user})
 
 
 def login(request):
@@ -16,6 +20,9 @@ def login(request):
     if len(request.GET) > 0:
         form = LoginForm(request.GET)
         if form.is_valid():
+            user_email = form.cleaned_data['email']
+            logged_user = Person.objects.get(email=user_email)
+            request.sessions['logged_user_id'] = logged_user.id
             return HttpResponseRedirect('/welcome')
         else:
             return render_to_response('login.html', {'form': form})
